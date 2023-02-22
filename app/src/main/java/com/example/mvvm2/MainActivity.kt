@@ -2,7 +2,6 @@ package com.example.mvvm2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import com.example.mvvm2.databinding.ActivityMainBinding
 import com.example.mvvm2.grid.MainGridFragment
@@ -13,14 +12,13 @@ import com.example.mvvm2.today.MainTodayFragment
 class MainActivity : AppCompatActivity() {
 
     companion object{
-
         val TAG: String = "로그"
         /** 현재 프래그먼트 */
         var nowFragment = "record"
-
     }
 
-    private val databinding: ActivityMainBinding by lazy { DataBindingUtil.setContentView(this, R.layout.activity_main) }
+    /** 데이터바인딩 */
+    private val binding: ActivityMainBinding by lazy { DataBindingUtil.setContentView(this, R.layout.activity_main) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,17 +28,17 @@ class MainActivity : AppCompatActivity() {
         /** 현재 프래그먼트 출력 */
         setFragment(nowFragment)
 
-        databinding.fragRecord.setOnClickListener {
+        binding.fragRecord.setOnClickListener {
             nowFragment = "record"
             setFragment(nowFragment)
         }
 
-        databinding.fragToday.setOnClickListener {
+        binding.fragToday.setOnClickListener {
             nowFragment = "today"
             setFragment(nowFragment)
         }
 
-        databinding.fragGrid.setOnClickListener {
+        binding.fragGrid.setOnClickListener {
             nowFragment = "grid"
             setFragment(nowFragment)
         }
@@ -49,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     private fun setFragment(fragName: String) {
         /** 트렌잭션 */
         val transaction = supportFragmentManager.beginTransaction()
-        val frameId = databinding.mainFrag.id
+        val frameId = binding.mainFrag.id
 
         /** 화면 교체 */
         when (fragName) {

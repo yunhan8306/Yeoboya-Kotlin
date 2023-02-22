@@ -10,5 +10,7 @@ class RecordRepository {
 
     suspend fun getDateData(date: String) = appDbInstance.getDateData(date)
 
+    suspend fun getNoData(no: Long) = appDbInstance.getNoData(no)
+
 
 }

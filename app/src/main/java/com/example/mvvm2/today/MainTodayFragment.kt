@@ -60,6 +60,7 @@ class MainTodayFragment : Fragment() {
         return binding.root
     }
 
+    /** init */
     @RequiresApi(Build.VERSION_CODES.O)
     fun initTodayFragment() {
         initViewModel()
@@ -91,7 +92,6 @@ class MainTodayFragment : Fragment() {
     }
 
     private fun setRecyclerView(){
-
         adapter = MainTodayRecyclerViewAdapter(requireContext(), todayRecordList, todayViewModel)
         binding.todayList.adapter = adapter
         binding.todayList.layoutManager = LinearLayoutManager(requireContext())

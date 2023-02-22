@@ -19,6 +19,10 @@ interface RecordDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveData(recordEntity: RecordEntity): Long
 
+    // no에 해당하는 selected 값 가져오기
+    @Query("SELECT * FROM record_model WHERE `no` = :no")
+    suspend fun getNoData(no: Long) : RecordEntity
+
 //    // data 수정
 //    @Update
 //    suspend fun update(recordEntity: RecordEntity)
