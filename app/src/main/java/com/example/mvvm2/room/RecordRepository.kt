@@ -4,7 +4,11 @@ import com.example.mvvm2.entity.RecordEntity
 
 class RecordRepository {
 
-    private val appDBInstance = GlobalApplication.recordDatabaseInstance.recordDAO()
+    private val appDbInstance = GlobalApplication.recordDatabaseInstance.recordDAO()
 
-    suspend fun saveData(record: RecordEntity) = appDBInstance.saveData(record)
+    suspend fun saveData(record: RecordEntity) = appDbInstance.saveData(record)
+
+    suspend fun getDateData(date: String) = appDbInstance.getDateData(date)
+
+
 }

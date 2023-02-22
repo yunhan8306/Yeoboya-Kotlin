@@ -30,7 +30,7 @@ abstract class RecordDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(recordDAO: RecordDAO) {
             // Delete all content here.
-            recordDAO.deleteAll()
+//            recordDAO.deleteAll()
 
             // Add sample words.
             var record = RecordEntity(0,"test1","content1","2023-01-01","12:30","https://assets.vogue.com/photos/63c8a2077022d35c31c766ee/master/w_1920,c_limit/00001-lemaire-fall-2023-menswear-credit-lena-emery.jpg")

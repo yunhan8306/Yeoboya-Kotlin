@@ -14,12 +14,23 @@ class RecordViewModel(private val repository: RecordRepository): ViewModel() {
 
     val isSaveComplete = MutableLiveData<Long>()
 
+    val isGetDateDataComplete = MutableLiveData<List<RecordEntity>>()
+
 
     fun saveRecord(recordEntity: RecordEntity) {
         CoroutineScope(Dispatchers.IO).launch {
             repository.saveData(recordEntity).let {
-                no ->
-                isSaveComplete.postValue(no)
+                // 수정 필요
+            isSaveComplete.postValue(Long.MAX_VALUE)
+//                isSaveComplete.value
+            }
+        }
+    }
+
+    fun getDateData(date: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            repository.getDateData(date).let {
+                isGetDateDataComplete.postValue(it)
             }
         }
     }

@@ -23,6 +23,7 @@ import com.example.mvvm2.room.RecordRepository
 import com.example.mvvm2.viewmodel.RecordViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
@@ -31,8 +32,8 @@ class MainRecordFragment : Fragment() {
     /** 데이터바인딩*/
     lateinit var binding: FragmentMainRecordBinding
 
-    /** 뷰모델 */
-    lateinit var viewModel: RecordViewModel
+    /** viewModel */
+    lateinit var recordViewModel: RecordViewModel
 
     /** uri 담을 MutableList*/
     lateinit var uriList: MutableList<String>
@@ -40,12 +41,13 @@ class MainRecordFragment : Fragment() {
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
 
-    /** viewModel */
-    lateinit var recordViewModel: RecordViewModel
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        initRecordFragment()
 
     }
 
@@ -58,14 +60,10 @@ class MainRecordFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_record, container, false)
 
         /** 이미지 추가(갤러리) */
-        binding.imageAdd.setOnClickListener {
-            activityResultLauncher().launch(openGallery())
-        }
+        binding.imageAdd.setOnClickListener { activityResultLauncher.launch(openGallery()) }
 
         /** record 저장 */
-        binding.btnSave.setOnClickListener {
-            saveRecord()
-        }
+        binding.btnSave.setOnClickListener { saveRecord() }
 
         return binding.root
     }
@@ -80,7 +78,7 @@ class MainRecordFragment : Fragment() {
     }
 
     /** 갤러리 uri 가져오기*/
-    private fun activityResultLauncher() =
+    private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
                 uriList = mutableListOf()
@@ -112,7 +110,7 @@ class MainRecordFragment : Fragment() {
 
     /** observer set */
     private fun setObserver() {
-        viewModel.isSaveComplete.observe(this) {
+        recordViewModel.isSaveComplete.observe(this) {
             no ->
             Log.d(TAG, "saveData - record no - $no")
 
@@ -130,19 +128,24 @@ class MainRecordFragment : Fragment() {
     fun saveRecord() {
         if(binding.recordInput.toString().trim().isEmpty().not()) {
 
-            /** 저장할 RecordEntity */
-            lateinit var recordEntity: RecordEntity
+            /** date, time */
+            val current = LocalDateTime.now()
 
-            recordEntity.title = binding.recordTitle.text.toString()
-            recordEntity.content = binding.recordInput.text.toString()
-            recordEntity.date = DateTimeFormatter.ISO_DATE.toString()
-            recordEntity.time = DateTimeFormatter.ISO_TIME.toString()
-            recordEntity.uriList = uriList.joinToString(separator = "^")
+            var title = binding.recordTitle.text.toString()
+            var content = binding.recordInput.text.toString()
+            var date = current.format(DateTimeFormatter.ISO_DATE)
+            var time = current.format(DateTimeFormatter.ISO_TIME).substring(0 until 8)
 
-            viewModel.saveRecord(recordEntity)
+            /** uriList 확인 @@분기 처리 필요 */
+            var uriListStr = if(uriList.isEmpty()){ "" } else { uriList.joinToString(separator = "^") }
 
+            /** title or content 입력 시 저장 */
+            if(title != "" || content != ""){
+                /** 저장할 RecordEntity */
+                var recordEntity = RecordEntity(0,title,content,date,time,uriListStr)
+                recordViewModel.saveRecord(recordEntity)
+                Log.d(TAG, "recordEntity - $recordEntity")
+            }
         }
     }
-
-
 }
