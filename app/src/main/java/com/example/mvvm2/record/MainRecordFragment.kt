@@ -36,7 +36,7 @@ class MainRecordFragment : Fragment() {
     lateinit var recordViewModel: RecordViewModel
 
     /** uri 담을 MutableList*/
-    lateinit var uriList: MutableList<String>
+    private var uriList: MutableList<String> = mutableListOf()
 
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
