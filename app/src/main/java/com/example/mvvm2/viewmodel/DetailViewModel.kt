@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel(private val repository: RecordRepository): ViewModel() {
 
-    // LiveData로 수정 필요?
     val isGetNoDataComplete = MutableLiveData<RecordEntity>()
 
     val isUpdateDataComplete = MutableLiveData<RecordEntity>()

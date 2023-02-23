@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.example.mvvm2.MainActivity
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.databinding.ActivityDetailUpdateBinding
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
+import com.example.mvvm2.today.MainTodayFragment
 import com.example.mvvm2.viewmodel.DetailViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
 
@@ -32,7 +34,7 @@ class DetailUpdateActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_update)
 
-        /** 인텐트 data 호출 */
+        /** 인텐트 data 호출  @@ getParcelableExtra 수정 필요 */
         val intent = intent
         record = intent?.getParcelableExtra("record")!!
 
@@ -46,8 +48,8 @@ class DetailUpdateActivity : AppCompatActivity() {
         /** record 수정 */
         binding.btnUpdate.setOnClickListener {
             updateRecord()
+            intentRecord()
         }
-
     }
     /** init */
     private fun initDetailActivity() {
@@ -68,20 +70,28 @@ class DetailUpdateActivity : AppCompatActivity() {
         }
     }
 
+    /** record 갱신 */
     private fun updateRecord() {
-        record.title = binding.recordTitle.text.toString()
-        record.content = binding.recordContent.text.toString()
-
         /** 이미지 갱신 수정 필요 */
 
-        Log.d(TAG, "update - record - $record")
-
+        record.title = binding.recordTitle.text.toString()
+        record.content = binding.recordContent.text.toString()
         detailViewModel.updateData(record)
-        finish()
     }
 
+    /** 액티비티로 record 인텐트 */
+    private fun intentRecord() {
+        Log.d(TAG, "update - $record")
+        val intent = Intent(applicationContext, DetailActivity::class.java).apply {
+            putExtra("updateRecord", record)
+        }
+        setResult(RESULT_OK, intent)
 
+        val intent2 = Intent(applicationContext, MainTodayFragment::class.java).apply {
+            putExtra("updateRecord", record)
+        }
+        setResult(RESULT_OK, intent2)
 
-
-
+        if (!isFinishing) finish()
+    }
 }

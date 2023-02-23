@@ -4,15 +4,19 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.example.mvvm2.MainActivity
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.databinding.ActivityDetailBinding
 import com.example.mvvm2.databinding.ActivityMainBinding
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
+import com.example.mvvm2.today.MainTodayFragment
 import com.example.mvvm2.viewmodel.DetailViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
 import kotlinx.coroutines.CoroutineScope
@@ -36,12 +40,22 @@ class DetailActivity : AppCompatActivity() {
     /** record no */
     var recordNo: Long = 0
 
+    /** activityResultLauncher */
+    lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
         /** no 인텐트값 호출 */
-        recordNo = intent.getStringExtra("no")!!.toLong()
+
+        val intent = intent
+        record = intent?.getParcelableExtra("record")!!
+
+        /** 데이터 출력 */
+        with(binding) {
+            viewDetail = record
+        }
 
         initDetailActivity()
 
@@ -54,15 +68,32 @@ class DetailActivity : AppCompatActivity() {
         /** record 수정  @@ 버튼 옵저버 수정 필요 */
         binding.btnUpdate.setOnClickListener {
             Log.d(TAG, "수정 클릭")
-            detailUpdate()
+            detailActivityIntent()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        updateRecord()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val intent = Intent(applicationContext,MainTodayFragment::class.java)
+        Log.d(TAG, "onDestroy - record - $record")
+        intent.putExtra("record", record)
+        setResult(RESULT_OK, intent)
+
+        if (!isFinishing) finish()
+
+        updateRecord()
     }
 
     /** init */
     private fun initDetailActivity() {
         initViewModel()
-        setObserver()
-        getRecord()
+//        setObserver()
+//        getRecord()
     }
 
     private fun initViewModel() {
@@ -82,10 +113,6 @@ class DetailActivity : AppCompatActivity() {
         }
 
         detailViewModel.isUpdateDataComplete.observe(this) {
-
-            Log.d(TAG, "record - $record")
-            Log.d(TAG, "it - $it")
-
             record = it
 
             /** 데이터 바인딩 출력 */
@@ -104,9 +131,24 @@ class DetailActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun detailUpdate() {
+    private fun detailActivityIntent() {
         val intent = Intent(applicationContext,DetailUpdateActivity::class.java)
         intent.putExtra("record", record)
-        startActivity(intent)
+        activityResultLauncher.launch(intent)
+    }
+
+    private fun updateRecord() {
+        /** 인텐트 data 호출  @@ getParcelableExtra 수정 필요 */
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if(it.resultCode == RESULT_OK) {
+                val intent: Intent? = it.data
+                record = intent?.getParcelableExtra("updateRecord")!!
+
+                /** 데이터 바인딩 출력 */
+                with(binding) {
+                    viewDetail = record
+                }
+            }
+        }
     }
 }

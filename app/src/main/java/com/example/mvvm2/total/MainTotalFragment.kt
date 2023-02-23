@@ -71,15 +71,14 @@ class MainTotalFragment : Fragment() {
             setRecyclerView()
             Log.d(TAG, "totalRecordList - $totalRecordList")
         }
-        detailViewModel.isUpdateDataComplete.observe(this) {
+        detailViewModel.isDeleteDataComplete.observe(this) {
 
             val position = totalRecordList.indexOf(it)
 
-            Log.d(TAG, "totalRecordList[position] - ${totalRecordList[position]}")
-            Log.d(TAG, "it - $it")
-
             totalRecordList[position] = it
+            totalRecordList.removeAt(position)
 
+            adapter.notifyItemRemoved(position)
             adapter.notifyItemChanged(position)
         }
     }
