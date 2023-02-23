@@ -11,12 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
-import com.example.mvvm2.databinding.FragmentMainTodayBinding
 import com.example.mvvm2.databinding.FragmentMainTotalBinding
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
-import com.example.mvvm2.today.MainTodayRecyclerViewAdapter
-import com.example.mvvm2.viewmodel.TodayViewModel
+import com.example.mvvm2.viewmodel.DetailViewModel
 import com.example.mvvm2.viewmodel.TotalViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
 
@@ -28,6 +26,7 @@ class MainTotalFragment : Fragment() {
 
     /** viewModel */
     lateinit var totalViewModel: TotalViewModel
+    lateinit var detailViewModel: DetailViewModel
 
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
@@ -80,7 +79,7 @@ class MainTotalFragment : Fragment() {
     }
 
     private fun setRecyclerView() {
-        adapter = MainTotalRecyclerViewAdapter(requireContext(), totalRecordList, totalViewModel)
+        adapter = MainTotalRecyclerViewAdapter(requireContext(), totalRecordList, detailViewModel)
         binding.totalList.adapter = adapter
         binding.totalList.layoutManager = LinearLayoutManager(requireContext())
     }

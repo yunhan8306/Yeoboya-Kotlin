@@ -23,13 +23,15 @@ interface RecordDAO {
     @Query("SELECT * FROM record_model WHERE `no` = :no")
     suspend fun getNoData(no: Long) : RecordEntity
 
-//    // data 수정
-//    @Update
-//    suspend fun update(recordEntity: RecordEntity)
+    // data 삭제
+    @Delete
+    suspend fun deleteData(recordEntity: RecordEntity)
+
+    // data 수정
+    @Update
+    suspend fun updateData(recordEntity: RecordEntity)
 //
-//    // data 삭제
-//    @Delete
-//    suspend fun deleteRecord(recordEntity: RecordEntity)
+
 //
 //    // 저장된 date 값 가져오기
 //    @Query("SELECT DISTINCT date FROM record_model")

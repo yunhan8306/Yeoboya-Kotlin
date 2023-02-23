@@ -18,5 +18,11 @@ class RecordRepository {
     /** 전체 record - total */
     suspend fun getAll() = appDbInstance.getAll()
 
+    /** record 삭제 - detail, total */
+    suspend fun deleteData(record: RecordEntity) = appDbInstance.deleteData(record)
+
+    /** record 수정 - detail, total */
+    suspend fun updateData(record: RecordEntity) = appDbInstance.updateData(record)
+
 
 }

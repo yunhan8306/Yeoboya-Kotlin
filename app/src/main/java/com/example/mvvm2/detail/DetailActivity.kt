@@ -1,8 +1,10 @@
 package com.example.mvvm2.detail
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.mvvm2.MainActivity.Companion.TAG
@@ -42,6 +44,18 @@ class DetailActivity : AppCompatActivity() {
         recordNo = intent.getStringExtra("no")!!.toLong()
 
         initDetailActivity()
+
+        /** record 삭제  @@ 버튼 옵저버 수정 필요 */
+        binding.btnRemove.setOnClickListener {
+            Log.d(TAG, "삭제 클릭")
+            deleteRecord()
+        }
+
+        /** record 수정  @@ 버튼 옵저버 수정 필요 */
+        binding.btnUpdate.setOnClickListener {
+            Log.d(TAG, "수정 클릭")
+            detailUpdate()
+        }
     }
 
     /** init */
@@ -70,5 +84,16 @@ class DetailActivity : AppCompatActivity() {
 
     private fun getRecord() {
         detailViewModel.getNoData(recordNo)
+    }
+
+    private fun deleteRecord() {
+        detailViewModel.deleteData(record)
+        finish()
+    }
+
+    private fun detailUpdate() {
+        val intent = Intent(applicationContext,DetailUpdateActivity::class.java)
+        intent.putExtra("record", record)
+        startActivity(intent)
     }
 }

@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mvvm2.R
 import com.example.mvvm2.databinding.ActivityDetailBinding
 import com.example.mvvm2.entity.RecordEntity
-import com.example.mvvm2.viewmodel.TotalViewModel
+import com.example.mvvm2.viewmodel.DetailViewModel
 
-class MainTotalRecyclerViewAdapter(val context: Context, val recordList: MutableList<RecordEntity>,
-                                   val totalViewModel: TotalViewModel
+class MainTotalRecyclerViewAdapter(
+    val context: Context, val recordList: MutableList<RecordEntity>,
+    val detailViewModel: DetailViewModel
 ): RecyclerView.Adapter<MainTotalRecyclerViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainTotalRecyclerViewHolder {
         return MainTotalRecyclerViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.activity_detail, parent, false))
@@ -36,6 +37,7 @@ class MainTotalRecyclerViewHolder(val binding: ActivityDetailBinding): RecyclerV
         }
 
         /** 수정, 삭제 viewModel 필요 */
+
 
         /** 이미지 뷰페이저 필요 */
     }
