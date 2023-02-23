@@ -7,6 +7,7 @@ import com.example.mvvm2.databinding.ActivityMainBinding
 import com.example.mvvm2.grid.MainGridFragment
 import com.example.mvvm2.record.MainRecordFragment
 import com.example.mvvm2.today.MainTodayFragment
+import com.example.mvvm2.total.MainTotalFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        /** 현재 프래그먼트 출력 */
+        /** 현재 프래그먼트 출력  @@ 옵저버로 수정 예정 */
         setFragment(nowFragment)
 
         binding.fragRecord.setOnClickListener {
@@ -42,6 +43,11 @@ class MainActivity : AppCompatActivity() {
             nowFragment = "grid"
             setFragment(nowFragment)
         }
+
+        binding.fragTotal.setOnClickListener {
+            nowFragment = "total"
+            setFragment(nowFragment)
+        }
     }
 
     private fun setFragment(fragName: String) {
@@ -54,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             "record" -> transaction.replace(frameId, MainRecordFragment()).commit()
             "today" -> transaction.replace(frameId, MainTodayFragment()).commit()
             "grid" -> transaction.replace(frameId, MainGridFragment()).commit()
+            "total" -> transaction.replace(frameId, MainTotalFragment()).commit()
         }
     }
 }

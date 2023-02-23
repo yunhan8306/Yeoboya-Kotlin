@@ -38,12 +38,13 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        /** no 인텐트값 호출 */
         recordNo = intent.getStringExtra("no")!!.toLong()
-        Log.d(TAG, "recordNo - $recordNo")
 
         initDetailActivity()
     }
 
+    /** init */
     private fun initDetailActivity() {
         initViewModel()
         setObserver()

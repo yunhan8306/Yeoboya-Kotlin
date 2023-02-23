@@ -1,8 +1,5 @@
 package com.example.mvvm2.viewmodel
 
-import android.content.Context
-import android.content.Intent
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mvvm2.entity.RecordEntity
@@ -23,12 +20,4 @@ class TodayViewModel(private val repository: RecordRepository): ViewModel() {
             }
         }
     }
-
-    /** detail activity 인텐트 */
-//    fun viewDetail(no: Long){
-//        val intent = Intent()
-//        intent.putExtra("no", no)
-//        ContextCompat.startActivity()
-//    }
-
 }

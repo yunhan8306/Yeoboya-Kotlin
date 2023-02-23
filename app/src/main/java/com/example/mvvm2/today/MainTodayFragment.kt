@@ -54,9 +54,7 @@ class MainTodayFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_today, container, false)
-
         return binding.root
     }
 
@@ -70,13 +68,12 @@ class MainTodayFragment : Fragment() {
 
     private fun initViewModel() {
         viewModelFactory = ViewModelFactory(RecordRepository())
-        todayViewModel = ViewModelProvider(this, viewModelFactory).get(TodayViewModel::class.java)
+        todayViewModel = ViewModelProvider(this, viewModelFactory)[TodayViewModel::class.java]
     }
 
     private fun setObserver() {
         todayViewModel.isGetDateDataComplete.observe(this) {
             todayRecordList = it.toMutableList()
-            Log.d(TAG, "setObserver - todayDateList - $todayRecordList")
             setRecyclerView()
             Log.d(TAG, "setRecyclerView - $todayRecordList")
         }
@@ -91,7 +88,7 @@ class MainTodayFragment : Fragment() {
         todayViewModel.getDateData(today)
     }
 
-    private fun setRecyclerView(){
+    private fun setRecyclerView() {
         adapter = MainTodayRecyclerViewAdapter(requireContext(), todayRecordList, todayViewModel)
         binding.todayList.adapter = adapter
         binding.todayList.layoutManager = LinearLayoutManager(requireContext())

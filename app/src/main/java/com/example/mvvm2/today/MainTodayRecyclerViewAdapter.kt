@@ -19,8 +19,7 @@ import com.example.mvvm2.viewmodel.TodayViewModel
 class MainTodayRecyclerViewAdapter(val context: Context, val recordList: MutableList<RecordEntity>,
                                    val todayViewModel: TodayViewModel): RecyclerView.Adapter<MainTodayRecyclerViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainTodayRecyclerViewHolder {
-        val binding = MainTodayRecyclerViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.today_list_item, parent, false))
-        return binding
+        return MainTodayRecyclerViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.today_list_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: MainTodayRecyclerViewHolder, position: Int) {

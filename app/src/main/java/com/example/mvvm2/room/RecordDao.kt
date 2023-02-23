@@ -8,8 +8,8 @@ import com.example.mvvm2.entity.RecordEntity
 @Dao
 interface RecordDAO {
     // 전체 data 가져오기
-//    @Query("SELECT * FROM record_model")
-//    suspend fun getAll(): List<RecordEntity>
+    @Query("SELECT * FROM record_model")
+    suspend fun getAll(): List<RecordEntity>
 //
     // date에 대한 data 가져오기
     @Query("SELECT * FROM record_model WHERE `date` = :date")

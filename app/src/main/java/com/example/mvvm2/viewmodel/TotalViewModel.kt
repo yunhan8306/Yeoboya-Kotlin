@@ -8,18 +8,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailViewModel(private val repository: RecordRepository): ViewModel() {
+class TotalViewModel(private val repository: RecordRepository): ViewModel() {
 
-    // LiveData로 수정 필요?
-    val isGetNoDataComplete = MutableLiveData<RecordEntity>()
+    val isGetAllComplete = MutableLiveData<List<RecordEntity>>()
 
-    /** no에 대한 data 조회 */
-    fun getNoData(no: Long) {
+    /** 전체 data 조회 */
+    fun getAll() {
         CoroutineScope(Dispatchers.IO).launch {
-            repository.getNoData(no).let {
-                isGetNoDataComplete.postValue(it)
+            repository.getAll().let {
+                isGetAllComplete.postValue(it)
             }
         }
     }
-
 }
