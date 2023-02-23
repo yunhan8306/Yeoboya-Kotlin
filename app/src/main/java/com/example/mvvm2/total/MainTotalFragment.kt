@@ -53,8 +53,6 @@ class MainTotalFragment : Fragment() {
         return binding.root
     }
 
-
-
     private fun initTotalFragment() {
         initViewModel()
         setObserver()
@@ -64,6 +62,7 @@ class MainTotalFragment : Fragment() {
     private fun initViewModel() {
         viewModelFactory = ViewModelFactory(RecordRepository())
         totalViewModel = ViewModelProvider(this, viewModelFactory)[TotalViewModel::class.java]
+        detailViewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
     }
 
     private fun setObserver() {
@@ -71,6 +70,17 @@ class MainTotalFragment : Fragment() {
             totalRecordList = it.toMutableList()
             setRecyclerView()
             Log.d(TAG, "totalRecordList - $totalRecordList")
+        }
+        detailViewModel.isUpdateDataComplete.observe(this) {
+
+            val position = totalRecordList.indexOf(it)
+
+            Log.d(TAG, "totalRecordList[position] - ${totalRecordList[position]}")
+            Log.d(TAG, "it - $it")
+
+            totalRecordList[position] = it
+
+            adapter.notifyItemChanged(position)
         }
     }
 

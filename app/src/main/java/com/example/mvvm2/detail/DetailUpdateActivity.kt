@@ -36,8 +36,6 @@ class DetailUpdateActivity : AppCompatActivity() {
         val intent = intent
         record = intent?.getParcelableExtra("record")!!
 
-        Log.d(TAG, "update - record - $record")
-
         initDetailActivity()
 
         /** 데이터 바인딩 출력 */
@@ -64,7 +62,7 @@ class DetailUpdateActivity : AppCompatActivity() {
     }
 
     private fun setObserver() {
-        detailViewModel.isUpdateData.observe(this) {
+        detailViewModel.isUpdateDataComplete.observe(this) {
             record = it
             Log.d(TAG, "setObserver - update - $record")
         }
@@ -75,6 +73,8 @@ class DetailUpdateActivity : AppCompatActivity() {
         record.content = binding.recordContent.text.toString()
 
         /** 이미지 갱신 수정 필요 */
+
+        Log.d(TAG, "update - record - $record")
 
         detailViewModel.updateData(record)
         finish()

@@ -17,14 +17,13 @@ import com.example.mvvm2.databinding.FragmentMainRecordBinding
 import com.example.mvvm2.databinding.FragmentMainTodayBinding
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
-import com.example.mvvm2.viewmodel.RecordViewModel
-import com.example.mvvm2.viewmodel.TodayViewModel
-import com.example.mvvm2.viewmodel.ViewModelFactory
+import com.example.mvvm2.viewmodel.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
 class MainTodayFragment : Fragment() {
+
 
     /** 데이터바인딩*/
     private lateinit var binding: FragmentMainTodayBinding
@@ -77,6 +76,8 @@ class MainTodayFragment : Fragment() {
             setRecyclerView()
             Log.d(TAG, "setRecyclerView - $todayRecordList")
         }
+
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

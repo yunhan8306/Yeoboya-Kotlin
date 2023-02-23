@@ -80,6 +80,19 @@ class DetailActivity : AppCompatActivity() {
                 viewDetail = record
             }
         }
+
+        detailViewModel.isUpdateDataComplete.observe(this) {
+
+            Log.d(TAG, "record - $record")
+            Log.d(TAG, "it - $it")
+
+            record = it
+
+            /** 데이터 바인딩 출력 */
+            with(binding) {
+                viewDetail = record
+            }
+        }
     }
 
     private fun getRecord() {

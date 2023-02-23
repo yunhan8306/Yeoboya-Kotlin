@@ -4,10 +4,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.example.mvvm2.databinding.ActivityMainBinding
+import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.grid.MainGridFragment
 import com.example.mvvm2.record.MainRecordFragment
 import com.example.mvvm2.today.MainTodayFragment
 import com.example.mvvm2.total.MainTotalFragment
+import com.example.mvvm2.viewmodel.DetailViewModel
+import com.example.mvvm2.viewmodel.TodayViewModel
+import com.example.mvvm2.viewmodel.TotalViewModel
+import com.example.mvvm2.viewmodel.ViewModelFactory
 
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         /** 현재 프래그먼트 */
         var nowFragment = "record"
     }
+
 
     /** 데이터바인딩 */
     private val binding: ActivityMainBinding by lazy { DataBindingUtil.setContentView(this, R.layout.activity_main) }
