@@ -147,6 +147,7 @@ class MainTodayFragment : Fragment() {
 
                 adapter.notifyItemChanged(position)
 
+
             }
         }
     }
