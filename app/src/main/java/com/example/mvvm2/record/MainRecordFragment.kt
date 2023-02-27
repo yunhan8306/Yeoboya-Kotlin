@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.bumptech.glide.Glide
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.databinding.ActivityMainBinding
@@ -41,9 +42,6 @@ class MainRecordFragment : Fragment() {
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,12 +58,23 @@ class MainRecordFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_record, container, false)
 
         /** 이미지 추가(갤러리) */
-        binding.imageAdd.setOnClickListener { activityResultLauncher.launch(openGallery()) }
+        binding.imageAdd.setOnClickListener {
+            activityResultLauncher.launch(openGallery())
+
+        }
 
         /** record 저장 */
         binding.btnSave.setOnClickListener { saveRecord() }
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if(uriList.isNotEmpty()){
+            printImg(uriList[0])
+        }
     }
 
     /** 갤러리 인텐트 */
@@ -75,6 +84,13 @@ class MainRecordFragment : Fragment() {
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         intent.action = Intent.ACTION_GET_CONTENT
         return intent
+    }
+
+    private fun printImg(uri: String) {
+        Glide.with(this)
+            .load(uri)
+            .error(R.drawable.ic_launcher_background)
+            .into(binding.imageList)
     }
 
     /** 갤러리 uri 가져오기*/

@@ -10,6 +10,10 @@
         <variable
             name="todayItem"
             type="com.example.mvvm2.entity.RecordEntity" />
+        
+        <variable
+            name="clickListener"
+            type="com.example.mvvm2.today.MainTodayRecyclerViewAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,6 +26,10 @@
         android:layout_marginBottom="5dp"
 
         android:background="@drawable/round_edge"
+
+
+
+
         >
         <TextView
             android:id="@+id/item_title"
@@ -64,6 +72,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:srcCompat="@tools:sample/avatars"
+
+            imgUri="@{todayItem.uriList}"
 
 
             />

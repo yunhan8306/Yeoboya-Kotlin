@@ -1,5 +1,6 @@
 package com.example.mvvm2.today
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,21 +13,21 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.SetOnClickListenerInterface
-import com.example.mvvm2.databinding.FragmentMainRecordBinding
 import com.example.mvvm2.databinding.FragmentMainTodayBinding
 import com.example.mvvm2.databinding.TodayListItemBinding
-import com.example.mvvm2.detail.DetailActivity
-import com.example.mvvm2.detail.DetailUpdateActivity
+import com.example.mvvm2.detail.DetailFragment
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
 import com.example.mvvm2.viewmodel.*
+import kotlinx.android.synthetic.main.fragment_main_record.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -57,6 +58,10 @@ class MainTodayFragment : Fragment() {
 
     var position = -1
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +69,8 @@ class MainTodayFragment : Fragment() {
         Log.d(TAG, "MainTodayFragment - onCreate called")
         initTodayFragment()
 
-        updateRecord()
+//        updateRecord()
+
     }
 
     override fun onCreateView(
@@ -72,12 +78,16 @@ class MainTodayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_today, container, false)
+
+//        binding.btnClose.setOnClickListener {
+//            binding.btnClose.visibility = View.GONE
+//            binding.detailFrame.visibility = View.GONE
+//        }
+
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
+
 
     /** init */
     @RequiresApi(Build.VERSION_CODES.O)
@@ -113,20 +123,22 @@ class MainTodayFragment : Fragment() {
 
     private fun setRecyclerView() {
 
-        adapter = MainTodayRecyclerViewAdapter(requireContext(), todayRecordList, todayViewModel)
+        adapter = MainTodayRecyclerViewAdapter()
+        adapter.recordList = todayRecordList
         binding.todayList.adapter = adapter
         binding.todayList.layoutManager = LinearLayoutManager(requireContext())
+
 
         adapter.listItemClickFunc(object: SetOnClickListenerInterface {
             override fun listItemClickListener(itemData: RecordEntity, binding: TodayListItemBinding) {
 
                 position = todayRecordList.indexOf(itemData)
 
-                Log.d(TAG, "listItemClickListener - $itemData")
-                val intent = Intent(requireContext(), DetailActivity::class.java)
-                intent.putExtra("record", itemData)
-//                ContextCompat.startActivity(requireContext(), intent, null)
-                activityResultLauncher.launch(intent)
+                /** detail 프래그먼트로 이동 */
+                setFragmentResult("no", bundleOf("bundleKey" to itemData.no.toString()))
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frag, DetailFragment())
+                    .commit()
             }
         })
     }

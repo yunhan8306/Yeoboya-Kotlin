@@ -5,41 +5,39 @@
     tools:context=".record.MainRecordFragment">
 
 
+    <data>
+        <variable
+            name="recordItem"
+            type="com.example.mvvm2.entity.RecordEntity" />
+    </data>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <ImageView
             android:id="@+id/image_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
-
-            android:src="@drawable/image_add"
-
+            android:src="@drawable/blank_space"
             app:layout_constraintBottom_toTopOf="@+id/record_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/image_add"
-
             app:layout_constraintHorizontal_bias="0.5"
-
             app:layout_constraintVertical_weight="1" />
 
         <ImageView
             android:id="@+id/image_add"
             android:layout_width="0dp"
             android:layout_height="0dp"
-
             android:src="@drawable/image_add"
             app:layout_constraintBottom_toTopOf="@+id/record_title"
             app:layout_constraintStart_toEndOf="@+id/image_list"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
             app:layout_constraintHorizontal_bias="0.5"
-
             app:layout_constraintVertical_weight="1" />
 
         <EditText
@@ -47,13 +45,10 @@
             app:layout_constraintBottom_toTopOf="@+id/record_input"
             app:layout_constraintTop_toBottomOf="@+id/image_add"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-
             android:background="@drawable/round_edge"
             android:hint="제목을 입력하세요"
-
             android:lines="1"
             android:padding="20dp" />
 
@@ -62,13 +57,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-
             app:layout_constraintStart_toStartOf="parent"
-
             app:layout_constraintTop_toBottomOf="@+id/record_title"
-
             app:layout_constraintVertical_weight="3"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/round_edge"
@@ -82,9 +73,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
-
             android:layout_height="wrap_content"
-
             android:layout_margin="7dp"
             android:text="save"
 

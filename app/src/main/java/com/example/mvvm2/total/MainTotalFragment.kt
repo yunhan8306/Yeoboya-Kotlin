@@ -11,7 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
+import com.example.mvvm2.SetOnClickListenerInterface
+import com.example.mvvm2.databinding.FragmentDetailBinding
 import com.example.mvvm2.databinding.FragmentMainTotalBinding
+import com.example.mvvm2.databinding.TodayListItemBinding
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
 import com.example.mvvm2.viewmodel.DetailViewModel
@@ -37,6 +40,8 @@ class MainTotalFragment : Fragment() {
     /** 어뎁터 */
     lateinit var adapter: MainTotalRecyclerViewAdapter
 
+    var position = -1
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,8 +66,8 @@ class MainTotalFragment : Fragment() {
 
     private fun initViewModel() {
         viewModelFactory = ViewModelFactory(RecordRepository())
-        totalViewModel = ViewModelProvider(this, viewModelFactory)[TotalViewModel::class.java]
-        detailViewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
+        totalViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[TotalViewModel::class.java]
+        detailViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[DetailViewModel::class.java]
     }
 
     private fun setObserver() {
@@ -88,9 +93,20 @@ class MainTotalFragment : Fragment() {
     }
 
     private fun setRecyclerView() {
-        adapter = MainTotalRecyclerViewAdapter(requireContext(), totalRecordList, detailViewModel)
+        adapter = MainTotalRecyclerViewAdapter()
+        adapter.recordList = totalRecordList
         binding.totalList.adapter = adapter
         binding.totalList.layoutManager = LinearLayoutManager(requireContext())
+
+//        adapter.listItemClickFunc(object: SetOnClickListenerInterface {
+//
+//            override fun listItemClickListener(itemData: RecordEntity, binding: FragmentDetailBinding) {
+//                position = totalRecordList.indexOf(itemData)
+//
+//
+//
+//            }
+//        })
     }
 
 }

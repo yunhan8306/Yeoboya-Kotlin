@@ -1,25 +1,17 @@
 package com.example.mvvm2.today
-
-import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.SetOnClickListenerInterface
 import com.example.mvvm2.databinding.TodayListItemBinding
-import com.example.mvvm2.detail.DetailActivity
 import com.example.mvvm2.entity.RecordEntity
-import com.example.mvvm2.viewmodel.TodayViewModel
 
-class MainTodayRecyclerViewAdapter(val context: Context, val recordList: MutableList<RecordEntity>,
-                                   val todayViewModel: TodayViewModel): RecyclerView.Adapter<MainTodayRecyclerViewAdapter.MainTodayRecyclerViewHolder>() {
+class MainTodayRecyclerViewAdapter: RecyclerView.Adapter<MainTodayRecyclerViewAdapter.MainTodayRecyclerViewHolder>() {
 
+    var recordList = mutableListOf<RecordEntity>()
 
     // interface 객체 생성
     private var onClickListener: SetOnClickListenerInterface? = null
@@ -28,8 +20,6 @@ class MainTodayRecyclerViewAdapter(val context: Context, val recordList: Mutable
     fun listItemClickFunc(pOnClick: SetOnClickListenerInterface) {
         this.onClickListener = pOnClick
     }
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainTodayRecyclerViewHolder {
         return MainTodayRecyclerViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.today_list_item, parent, false))
@@ -61,18 +51,6 @@ class MainTodayRecyclerViewAdapter(val context: Context, val recordList: Mutable
                 todayItem = record
             }
 
-            /** detail activity 인텐트   @@ viewModel 수정? */
-//            binding.item.setOnClickListener{
-//                val intent = Intent(itemView.context, DetailActivity::class.java)
-////            intent.putExtra("no", "${record.no}")
-////            ContextCompat.startActivity(itemView.context, intent, null)
-//
-//
-//                intent.putExtra("record", record)
-//                ContextCompat.startActivity(itemView.context, intent, null)
-//
-//            }
-
             // 클릭하고자 하는 view의 리스너에 데이터 전달
             if(adapterPosition != RecyclerView.NO_POSITION){
                 binding.item.setOnClickListener {
@@ -85,7 +63,6 @@ class MainTodayRecyclerViewAdapter(val context: Context, val recordList: Mutable
 
         }
     }
-
 }
 
 
