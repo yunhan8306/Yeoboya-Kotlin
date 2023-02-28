@@ -20,4 +20,6 @@ class TodayViewModel(private val repository: RecordRepository): ViewModel() {
             }
         }
     }
+
+
 }

@@ -16,17 +16,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <FrameLayout
             android:id="@+id/image_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/blank_space"
             app:layout_constraintBottom_toTopOf="@+id/record_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/image_add"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintVertical_weight="1" />
+            app:layout_constraintVertical_weight="1" >
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false" />
+
+            <me.relex.circleindicator.CircleIndicator3
+                android:id="@+id/indicator"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom" />
+
+        </FrameLayout>
+
+
 
         <ImageView
             android:id="@+id/image_add"
@@ -76,7 +92,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="7dp"
             android:text="save"
-
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

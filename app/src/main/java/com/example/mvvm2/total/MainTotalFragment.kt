@@ -6,30 +6,36 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
-import com.example.mvvm2.SetOnClickListenerInterface
+import com.example.mvvm2.SetOnClickListenerInterface2
 import com.example.mvvm2.databinding.FragmentDetailBinding
 import com.example.mvvm2.databinding.FragmentMainTotalBinding
-import com.example.mvvm2.databinding.TodayListItemBinding
+import com.example.mvvm2.detail.DetailFragment
+import com.example.mvvm2.detail.DetailUpdateFragment
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
 import com.example.mvvm2.viewmodel.DetailViewModel
+import com.example.mvvm2.viewmodel.MainViewModel
 import com.example.mvvm2.viewmodel.TotalViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
 
 
 class MainTotalFragment : Fragment() {
 
-    /** 데이터바인딩*/
+    /** 바인딩 */
     private lateinit var binding: FragmentMainTotalBinding
 
     /** viewModel */
-    lateinit var totalViewModel: TotalViewModel
-    lateinit var detailViewModel: DetailViewModel
+    private val mainViewModel: MainViewModel by viewModels(ownerProducer = { requireParentFragment() }, factoryProducer = { viewModelFactory })
+    private val totalViewModel: TotalViewModel by viewModels(factoryProducer = { viewModelFactory })
+    private val detailViewModel: DetailViewModel by viewModels(factoryProducer = { viewModelFactory })
 
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
@@ -42,32 +48,30 @@ class MainTotalFragment : Fragment() {
 
     var position = -1
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "MainTotalFragment - onCreate called")
+
         initTotalFragment()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_total, container, false)
         return binding.root
     }
 
+    /** init */
     private fun initTotalFragment() {
-        initViewModel()
+        initViewModelFactory()
         setObserver()
         getTotalRecordList()
+
     }
 
-    private fun initViewModel() {
+    private fun initViewModelFactory() {
         viewModelFactory = ViewModelFactory(RecordRepository())
-        totalViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[TotalViewModel::class.java]
-        detailViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[DetailViewModel::class.java]
     }
 
     private fun setObserver() {
@@ -76,15 +80,18 @@ class MainTotalFragment : Fragment() {
             setRecyclerView()
             Log.d(TAG, "totalRecordList - $totalRecordList")
         }
-        detailViewModel.isDeleteDataComplete.observe(this) {
+        detailViewModel.isDeleteDataComplete.observe(requireActivity()) {
+            if(::totalRecordList.isInitialized) {
+                val position = totalRecordList.indexOf(it)
 
-            val position = totalRecordList.indexOf(it)
+                if(position != -1) {
+//                    totalRecordList[position] = record
+                    totalRecordList.removeAt(position)
 
-            totalRecordList[position] = it
-            totalRecordList.removeAt(position)
-
-            adapter.notifyItemRemoved(position)
-            adapter.notifyItemChanged(position)
+                    adapter.notifyItemRemoved(position)
+//                adapter.notifyItemChanged(position)
+                }
+            }
         }
     }
 
@@ -98,15 +105,24 @@ class MainTotalFragment : Fragment() {
         binding.totalList.adapter = adapter
         binding.totalList.layoutManager = LinearLayoutManager(requireContext())
 
-//        adapter.listItemClickFunc(object: SetOnClickListenerInterface {
-//
-//            override fun listItemClickListener(itemData: RecordEntity, binding: FragmentDetailBinding) {
-//                position = totalRecordList.indexOf(itemData)
-//
-//
-//
-//            }
-//        })
-    }
+        adapter.removeClickListener(object: SetOnClickListenerInterface2 {
 
+            override fun updateClickListener(itemData: RecordEntity, binding: FragmentDetailBinding) {
+
+                position = totalRecordList.indexOf(itemData)
+                mainViewModel.selectRecord = itemData
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.detail_frag, DetailUpdateFragment())
+                    .commit()
+
+                /** detail_frag 출력 */
+                mainViewModel.setVisibilityDetailFragment(true)
+            }
+
+            override fun removeClickListener(itemData: RecordEntity, binding: FragmentDetailBinding) {
+                detailViewModel.deleteData(itemData)
+            }
+        })
+    }
 }

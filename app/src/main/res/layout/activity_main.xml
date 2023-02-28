@@ -66,5 +66,17 @@
             app:layout_constraintBottom_toTopOf="@+id/frag_record"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <FrameLayout
+            android:id="@+id/detail_frag"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="15dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/round_edge"
+            app:layout_constraintBottom_toTopOf="@+id/frag_record"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

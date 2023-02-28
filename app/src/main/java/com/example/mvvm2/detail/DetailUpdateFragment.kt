@@ -11,12 +11,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.databinding.FragmentDetailUpdateBinding
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
+import com.example.mvvm2.total.MainTotalFragment
 import com.example.mvvm2.viewmodel.DetailViewModel
+import com.example.mvvm2.viewmodel.MainViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
 
 
@@ -24,6 +27,7 @@ class DetailUpdateFragment : Fragment() {
 
     /** viewModel */
     lateinit var detailViewModel: DetailViewModel
+    lateinit var mainViewModel: MainViewModel
 
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
@@ -31,58 +35,71 @@ class DetailUpdateFragment : Fragment() {
     /** record */
     lateinit var record: RecordEntity
 
-    /** 데이터바인딩*/
+    /** 바인딩*/
     private lateinit var binding:FragmentDetailUpdateBinding
+
+    /** 어뎁터 */
+    lateinit var adapter:ViewPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "DetailUpdateFragment - onCreate called")
 
+        /** init */
         initDetailUpdateFragment()
 
-        setFragmentResultListener("no2") { requestKey, bundle ->
-            val recordNo = bundle.getString("bundleKey")!!.toLong()
-
-            Log.d(TAG, "recordNo - $recordNo")
-            detailViewModel.getNoData(recordNo)
-        }
+        record = mainViewModel.selectRecord
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail_update, container, false)
 
+        /** 저장 버튼 클릭 */
         binding.btnSave.setOnClickListener {
-
             record.title = binding.recordTitle.text.toString()
             record.content = binding.recordContent.text.toString()
 
             detailViewModel.updateData(record)
 
-            Log.d(TAG, "DetailUpdateFragment - onCreateView called")
-
-            setFragmentResult("no", bundleOf("bundleKey" to record.no.toString()))
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frag, DetailFragment())
+                .replace(R.id.detail_frag, DetailFragment())
                 .commit()
+
+            /** 이미지 수정 필요 */
         }
+
+        /** 데이터 바인딩 출력 */
+        with(binding) {
+            viewDetail = record
+        }
+
+        /** 뷰페이저 출력 */
+        adapter = ViewPagerAdapter()
+        var uriList = record.uriList.split("^")
+
+        adapter.uriList = uriList
+        binding.viewPager.adapter = adapter
+        binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
         return binding.root
     }
 
     fun initDetailUpdateFragment() {
         initViewModel()
-        setObserver()
+//        setObserver()
     }
 
     private fun initViewModel() {
         viewModelFactory = ViewModelFactory(RecordRepository())
-        detailViewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
+        detailViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[DetailViewModel::class.java]
+        mainViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[MainViewModel::class.java]
     }
 
+
+    /** 변경 예정 */
     private fun setObserver() {
         detailViewModel.isGetNoDataComplete.observe(this) {
             record = it
@@ -93,6 +110,14 @@ class DetailUpdateFragment : Fragment() {
             with(binding) {
                 viewDetail = record
             }
+
+            /** 뷰페이저 출력 */
+            adapter = ViewPagerAdapter()
+            var qq = record.uriList.split("^")
+
+            adapter.uriList = qq
+            binding.viewPager.adapter = adapter
+            binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }
 
         detailViewModel.isUpdateDataComplete.observe(this) {

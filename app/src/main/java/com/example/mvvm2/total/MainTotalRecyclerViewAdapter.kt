@@ -4,9 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.mvvm2.R
 import com.example.mvvm2.SetOnClickListenerInterface
+import com.example.mvvm2.SetOnClickListenerInterface2
 import com.example.mvvm2.databinding.FragmentDetailBinding
+import com.example.mvvm2.detail.ViewPagerAdapter
 import com.example.mvvm2.entity.RecordEntity
 
 class MainTotalRecyclerViewAdapter(
@@ -14,11 +17,18 @@ class MainTotalRecyclerViewAdapter(
 
     var recordList = mutableListOf<RecordEntity>()
 
+    /** 어뎁터 */
+    lateinit var adapter: ViewPagerAdapter
+
     // interface 객체 생성
-    private var onClickListener: SetOnClickListenerInterface? = null
+    private var onClickListener: SetOnClickListenerInterface2? = null
 
     // Activity에서 호출 시 객체 초기화
-    fun listItemClickFunc(pOnClick: SetOnClickListenerInterface) {
+    fun removeClickListener(pOnClick: SetOnClickListenerInterface2) {
+        this.onClickListener = pOnClick
+    }
+
+    fun updateClickListener(pOnClick: SetOnClickListenerInterface2) {
         this.onClickListener = pOnClick
     }
 
@@ -43,7 +53,25 @@ class MainTotalRecyclerViewAdapter(
                 viewDetail = record
             }
 
-            /** 이미지 뷰페이저 필요 */
+            /** 뷰페이저 출력 */
+            adapter = ViewPagerAdapter()
+            var qq = record.uriList.split("^")
+
+            adapter.uriList = qq
+            binding.viewPager.adapter = adapter
+            binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
+            /** 수정, 삭제 */
+            // 클릭하고자 하는 view의 리스너에 데이터 전달
+            if(adapterPosition != RecyclerView.NO_POSITION){
+                binding.btnRemove.setOnClickListener {
+                    onClickListener?.removeClickListener(record, binding)
+                }
+
+                binding.btnUpdate.setOnClickListener {
+                    onClickListener?.updateClickListener(record, binding)
+                }
+            }
         }
     }
 }
