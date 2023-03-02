@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.mvvm2.R
 import com.example.mvvm2.databinding.ActivityImageViewBinding
 
 class ViewPagerAdapter : RecyclerView.Adapter<ViewPagerHolder>() {
@@ -30,18 +29,6 @@ class ViewPagerHolder(private val binding: ActivityImageViewBinding) : RecyclerV
     fun bind(imgUri: String) {
         Glide.with(itemView)
             .load(imgUri)
-//            .error(R.drawable.blank_space)
             .into(binding.recordImage)
-
-        /** 이미지 상세 뷰 오류 해결 필요 */
-//        itemView.setOnClickListener{
-//
-//            Log.d(TAG, "이미지뷰1")
-//            // 상세 뷰 켜짐
-//            val intent = Intent(itemView.context, ActivityImageViewBinding::class.java)
-//            Log.d(TAG, "이미지뷰2")
-//            intent.putExtra("uri", imgUri)
-//            ContextCompat.startActivity(itemView.context, intent, null)
-//        }
     }
 }

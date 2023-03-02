@@ -4,11 +4,17 @@ import android.app.Activity
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil.setContentView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.mvvm2.databinding.ActivityMainBinding
 import com.example.mvvm2.grid.MainGridFragment
 import com.example.mvvm2.record.MainRecordFragment
@@ -16,6 +22,10 @@ import com.example.mvvm2.room.RecordRepository
 import com.example.mvvm2.today.MainTodayFragment
 import com.example.mvvm2.total.MainTotalFragment
 import com.example.mvvm2.viewmodel.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,7 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /** viewModel */
-    private val mainViewModel: MainViewModel by viewModels(factoryProducer = { viewModelFactory })
+//    private val mainViewModel: MainViewModel by viewModels()
+    lateinit var mainViewModel: MainViewModel
+    lateinit var detailViewModel: DetailViewModel
 
     /** viewModelFactory */
     private lateinit var viewModelFactory: ViewModelFactory
@@ -33,12 +45,29 @@ class MainActivity : AppCompatActivity() {
     /** detailFragment visibility / true - 보이기, false - 숨기기 */
     private var visibilityTF: Boolean? = null
 
-    /** 뒤로가기 버튼 콜백함수 */
+    /** 뒤로가기 플래그 */
+    private var doubleBackPressed = false
+
+    /** 뒤로가기 버튼 콜백 */
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
+            Log.d(TAG, "visibilityTF - $visibilityTF")
             if(visibilityTF == true) {
                 binding.detailFrag.visibility = View.GONE
                 binding.mainFrag.visibility = View.VISIBLE
+                visibilityTF = false
+            } else {
+                if(doubleBackPressed){
+                    finishAffinity()
+                    return
+                }
+                doubleBackPressed = true
+                Toast.makeText(this@MainActivity, "뒤로가기 버튼을 한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(2000).run {
+                        doubleBackPressed = false
+                    }
+                }
             }
         }
     }
@@ -59,11 +88,8 @@ class MainActivity : AppCompatActivity() {
 
         /** 현재 프래그먼트 출력  @@ 바인딩어뎁터 수정 예정 */
         binding.fragRecord.setOnClickListener { setFragment("record") }
-
         binding.fragToday.setOnClickListener { setFragment("today") }
-
         binding.fragGrid.setOnClickListener { setFragment("grid") }
-
         binding.fragTotal.setOnClickListener { setFragment("total") }
 
         /** detail_frag 옵저버 */
@@ -76,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             } else if(visibilityTF == true) {
                 binding.detailFrag.visibility = View.VISIBLE
                 binding.detailFrag.isClickable = true
-                binding.mainFrag.visibility = View.INVISIBLE
+                binding.mainFrag.visibility = View.GONE
             }
         }
     }
@@ -109,7 +135,23 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.setVisibilityDetailFragment(false)
     }
 
+    private fun initMainActivity() {
+        initViewModelFactory()
+        setObserver()
+    }
+
     private fun initViewModelFactory() {
         viewModelFactory = ViewModelFactory(RecordRepository())
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        detailViewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
+    }
+
+    private fun setObserver() {
+        detailViewModel.isDeleteDataComplete.observe(this) {
+            Toast.makeText(this,"삭제가 완료되었습니다", Toast.LENGTH_SHORT).show()
+        }
+        detailViewModel.isUpdateDataComplete.observe(this) {
+            Toast.makeText(this,"수정이 완료되었습니다", Toast.LENGTH_SHORT).show()
+        }
     }
 }

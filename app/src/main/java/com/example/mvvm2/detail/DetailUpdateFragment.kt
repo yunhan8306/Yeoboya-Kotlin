@@ -12,6 +12,7 @@ import com.example.mvvm2.R
 import com.example.mvvm2.databinding.FragmentDetailUpdateBinding
 import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
+import com.example.mvvm2.total.MainTotalFragment
 import com.example.mvvm2.viewmodel.DetailViewModel
 import com.example.mvvm2.viewmodel.MainViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
@@ -22,8 +23,7 @@ class DetailUpdateFragment : Fragment() {
     /** viewModel */
     private val detailViewModel: DetailViewModel by viewModels(
         { requireActivity() }, factoryProducer = { viewModelFactory })
-    private val mainViewModel: MainViewModel by viewModels(
-        { requireActivity() }, factoryProducer = { viewModelFactory })
+    private val mainViewModel: MainViewModel by viewModels({ requireActivity() })
 
     /** viewModelFactory */
     private lateinit var viewModelFactory: ViewModelFactory
@@ -42,7 +42,6 @@ class DetailUpdateFragment : Fragment() {
 
         /** init */
         initDetailUpdateFragment()
-
         record = mainViewModel.selectRecord
     }
 
@@ -50,7 +49,6 @@ class DetailUpdateFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail_update,
             container, false)
 
@@ -61,11 +59,15 @@ class DetailUpdateFragment : Fragment() {
 
             detailViewModel.updateData(record)
 
+            if(mainViewModel.agoFragment == "total") {
+                mainViewModel.setVisibilityDetailFragment(false)
+            }
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.detail_frag, DetailFragment())
                 .commit()
-
             /** 이미지 수정 필요 */
+
         }
 
         /** 데이터 바인딩 출력 */

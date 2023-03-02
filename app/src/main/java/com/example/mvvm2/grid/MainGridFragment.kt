@@ -30,7 +30,7 @@ class MainGridFragment : Fragment() {
 
     /** viewModel */
     private val totalViewModel: TotalViewModel by viewModels(factoryProducer = { viewModelFactory })
-    private val mainViewModel: MainViewModel by viewModels({ requireActivity() }, factoryProducer = { viewModelFactory })
+    private val mainViewModel: MainViewModel by viewModels({ requireActivity() })
     private val detailViewModel: DetailViewModel by viewModels({requireActivity()}, factoryProducer = { viewModelFactory })
 
     /** viewModelFactory */
@@ -99,17 +99,18 @@ class MainGridFragment : Fragment() {
     }
 
     private fun setObserver() {
+        /** 조회 옵저버 */
         totalViewModel.isGetAllComplete.observe(this) {
             gridRecordList = it.toMutableList()
             setRecyclerView()
         }
+        /** 삭제 옵저버 */
         detailViewModel.isDeleteDataComplete.observe(requireActivity()) {
             if(::gridRecordList.isInitialized) {
                 val position = gridRecordList.indexOf(it)
 
                 if(position != -1) {
                     gridRecordList.removeAt(position)
-
                     mainGridRecyclerViewAdapter.notifyItemRemoved(position)
                 }
             }

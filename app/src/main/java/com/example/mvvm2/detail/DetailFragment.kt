@@ -1,26 +1,21 @@
 package com.example.mvvm2.detail
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.*
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.databinding.FragmentDetailBinding
 import com.example.mvvm2.entity.RecordEntity
-import com.example.mvvm2.grid.MainGridFragment
 import com.example.mvvm2.room.RecordRepository
-import com.example.mvvm2.today.MainTodayFragment
 import com.example.mvvm2.viewmodel.DetailViewModel
 import com.example.mvvm2.viewmodel.MainViewModel
-import com.example.mvvm2.viewmodel.TodayViewModel
 import com.example.mvvm2.viewmodel.ViewModelFactory
 
 
@@ -29,8 +24,7 @@ class DetailFragment : Fragment() {
     /** viewModel */
     private val detailViewModel: DetailViewModel by viewModels(
         {requireActivity()}, factoryProducer = { viewModelFactory })
-    private val mainViewModel: MainViewModel by viewModels(
-        {requireActivity() }, factoryProducer = { viewModelFactory })
+    private val mainViewModel: MainViewModel by viewModels({ requireActivity() })
 
     /** viewModelFactory */
     private lateinit var viewModelFactory: ViewModelFactory
@@ -53,7 +47,7 @@ class DetailFragment : Fragment() {
         record = mainViewModel.selectRecord
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,7 +57,14 @@ class DetailFragment : Fragment() {
 
         /** 삭제 버튼 클릭 */
         binding.btnRemove.setOnClickListener {
-            detailViewModel.deleteData(record)
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("정말 삭제하시겠습니까?.")
+                .setPositiveButton("확인") { dialog, id ->
+                    detailViewModel.deleteData(record)
+                }
+
+
+//            detailViewModel.deleteData(record)
 
             /** detail_frag 꺼짐 */
             mainViewModel.setVisibilityDetailFragment(false)

@@ -6,7 +6,7 @@ import com.example.mvvm2.entity.RecordEntity
 import com.example.mvvm2.room.RecordRepository
 
 
-class MainViewModel(private val repository: RecordRepository) : ViewModel() {
+class MainViewModel : ViewModel() {
 
     /** 이전 프래그먼트 */
     var agoFragment = ""

@@ -1,5 +1,6 @@
 package com.example.mvvm2.total
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -33,12 +34,12 @@ class MainTotalFragment : Fragment() {
     private lateinit var binding: FragmentMainTotalBinding
 
     /** viewModel */
-    private val mainViewModel: MainViewModel by viewModels({ requireActivity() }, factoryProducer = { viewModelFactory })
     private val totalViewModel: TotalViewModel by viewModels(factoryProducer = { viewModelFactory })
-    private val detailViewModel: DetailViewModel by viewModels({requireActivity()}, factoryProducer = { viewModelFactory })
+    private val mainViewModel: MainViewModel by viewModels({ requireActivity() })
+    private val detailViewModel: DetailViewModel by viewModels({requireActivity()},{ viewModelFactory })
 
     /** viewModelFactory */
-    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var viewModelFactory: ViewModelFactory
 
     /** totalRecordList */
     lateinit var totalRecordList: MutableList<RecordEntity>
@@ -47,6 +48,11 @@ class MainTotalFragment : Fragment() {
     lateinit var mainTotalRecyclerViewAdapter: MainTotalRecyclerViewAdapter
 
     var position = -1
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mainViewModel
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +73,6 @@ class MainTotalFragment : Fragment() {
         initViewModelFactory()
         setObserver()
         getTotalRecordList()
-
     }
 
     private fun initViewModelFactory() {
@@ -115,12 +120,9 @@ class MainTotalFragment : Fragment() {
         }
 
         mainTotalRecyclerViewAdapter.removeClickListener(object: DetailItemSetOnClickListenerInterface {
-
             override fun updateClickListener(itemData: RecordEntity, binding: FragmentDetailBinding) {
-
                 position = totalRecordList.indexOf(itemData)
                 mainViewModel.selectRecord = itemData
-
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.detail_frag, DetailUpdateFragment())
                     .commit()
