@@ -1,10 +1,12 @@
 package com.example.mvvm2.detail
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.*
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +15,7 @@ import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
 import com.example.mvvm2.databinding.FragmentDetailBinding
 import com.example.mvvm2.entity.RecordEntity
+import com.example.mvvm2.grid.MainGridFragment
 import com.example.mvvm2.room.RecordRepository
 import com.example.mvvm2.today.MainTodayFragment
 import com.example.mvvm2.viewmodel.DetailViewModel
@@ -24,11 +27,13 @@ import com.example.mvvm2.viewmodel.ViewModelFactory
 class DetailFragment : Fragment() {
 
     /** viewModel */
-    lateinit var detailViewModel: DetailViewModel
-    lateinit var mainViewModel: MainViewModel
+    private val detailViewModel: DetailViewModel by viewModels(
+        {requireActivity()}, factoryProducer = { viewModelFactory })
+    private val mainViewModel: MainViewModel by viewModels(
+        {requireActivity() }, factoryProducer = { viewModelFactory })
 
     /** viewModelFactory */
-    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var viewModelFactory: ViewModelFactory
 
     /** 바인딩*/
     private lateinit var binding: FragmentDetailBinding
@@ -43,23 +48,22 @@ class DetailFragment : Fragment() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "DetailFragment - onCreate called")
 
-        initDetailFragment()
+        initViewModelFactory()
 
         record = mainViewModel.selectRecord
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail, container, false)
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail,
+            container, false)
 
         /** 삭제 버튼 클릭 */
         binding.btnRemove.setOnClickListener {
             detailViewModel.deleteData(record)
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frag, MainTodayFragment())
-                .commit()
 
             /** detail_frag 꺼짐 */
             mainViewModel.setVisibilityDetailFragment(false)
@@ -79,7 +83,7 @@ class DetailFragment : Fragment() {
 
         /** 이미지 뷰페이저 출력 */
         adapter = ViewPagerAdapter()
-        var uriList = record.uriList.split("^")
+        val uriList = record.uriList.split("^")
 
         adapter.uriList = uriList
         binding.viewPager.adapter = adapter
@@ -88,13 +92,7 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
-    fun initDetailFragment() {
-        initViewModel()
-    }
-
-    private fun initViewModel() {
+    private fun initViewModelFactory() {
         viewModelFactory = ViewModelFactory(RecordRepository())
-        detailViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[DetailViewModel::class.java]
-        mainViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[MainViewModel::class.java]
     }
 }

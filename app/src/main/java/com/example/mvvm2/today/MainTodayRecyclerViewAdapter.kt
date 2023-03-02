@@ -5,7 +5,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.mvvm2.R
-import com.example.mvvm2.SetOnClickListenerInterface
+import com.example.mvvm2.ItemSetOnClickListenerInterface
 import com.example.mvvm2.databinding.TodayListItemBinding
 import com.example.mvvm2.entity.RecordEntity
 
@@ -14,10 +14,10 @@ class MainTodayRecyclerViewAdapter: RecyclerView.Adapter<MainTodayRecyclerViewAd
     var recordList = mutableListOf<RecordEntity>()
 
     // interface 객체 생성
-    private var onClickListener: SetOnClickListenerInterface? = null
+    private var onClickListener: ItemSetOnClickListenerInterface? = null
 
     // Activity에서 호출 시 객체 초기화
-    fun listItemClickFunc(pOnClick: SetOnClickListenerInterface) {
+    fun listItemClickFunc(pOnClick: ItemSetOnClickListenerInterface) {
         this.onClickListener = pOnClick
     }
 

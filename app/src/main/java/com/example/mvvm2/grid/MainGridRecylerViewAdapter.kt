@@ -1,37 +1,56 @@
 package com.example.mvvm2.grid
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.mvvm2.R
-import com.example.mvvm2.databinding.ActivityImageViewBinding
+import com.example.mvvm2.GridItemSetOnClickListenerInterface
+import com.example.mvvm2.MainActivity.Companion.TAG
+import com.example.mvvm2.databinding.GridImageViewBinding
 import com.example.mvvm2.entity.RecordEntity
 
-class MainGridRecyclerViewAdapter : RecyclerView.Adapter<MainGridRecyclerViewHolder>() {
+class MainGridRecyclerViewAdapter : RecyclerView.Adapter<MainGridRecyclerViewAdapter.MainGridRecyclerViewHolder>() {
 
-    private val recordList = listOf<RecordEntity>()
+    var recordList = listOf<RecordEntity>()
+
+    // interface 객체 생성
+    private var onClickListener: GridItemSetOnClickListenerInterface? = null
+
+    // Activity에서 호출 시 객체 초기화
+    fun listItemClickFunc(pOnClick: GridItemSetOnClickListenerInterface) {
+        this.onClickListener = pOnClick
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainGridRecyclerViewHolder {
-        return MainGridRecyclerViewHolder(ActivityImageViewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return MainGridRecyclerViewHolder(
+            GridImageViewBinding.inflate(LayoutInflater.from(parent.context),
+                parent, false))
     }
 
     override fun onBindViewHolder(holder: MainGridRecyclerViewHolder, position: Int) {
-        val uri = recordList[position].uriList.split("^")[0]
-        holder.bind(uri)
+        val record = recordList[position]
+        holder.bind(record)
     }
 
     override fun getItemCount(): Int {
         return recordList.size
     }
-}
 
-class MainGridRecyclerViewHolder(private val binding: ActivityImageViewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MainGridRecyclerViewHolder(private val binding: GridImageViewBinding)
+        : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(uri: String){
-        Glide.with(itemView)
-            .load(uri)
-            .error(R.drawable.blank_space)
-            .into(binding.recordImage)
+        fun bind(record: RecordEntity){
+            with(binding) {
+                gridItem = record
+                Log.d(TAG, "record")
+            }
+
+            if(adapterPosition != RecyclerView.NO_POSITION){
+                binding.gridImage.setOnClickListener {
+                    onClickListener?.listItemClickListener(record, binding)
+                }
+            }
+        }
     }
 }
+

@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm2.MainActivity.Companion.TAG
 import com.example.mvvm2.R
-import com.example.mvvm2.SetOnClickListenerInterface2
+import com.example.mvvm2.DetailItemSetOnClickListenerInterface
 import com.example.mvvm2.databinding.FragmentDetailBinding
 import com.example.mvvm2.databinding.FragmentMainTotalBinding
 import com.example.mvvm2.detail.DetailFragment
@@ -33,9 +33,9 @@ class MainTotalFragment : Fragment() {
     private lateinit var binding: FragmentMainTotalBinding
 
     /** viewModel */
-    private val mainViewModel: MainViewModel by viewModels(ownerProducer = { requireParentFragment() }, factoryProducer = { viewModelFactory })
+    private val mainViewModel: MainViewModel by viewModels({ requireActivity() }, factoryProducer = { viewModelFactory })
     private val totalViewModel: TotalViewModel by viewModels(factoryProducer = { viewModelFactory })
-    private val detailViewModel: DetailViewModel by viewModels(factoryProducer = { viewModelFactory })
+    private val detailViewModel: DetailViewModel by viewModels({requireActivity()}, factoryProducer = { viewModelFactory })
 
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
@@ -44,7 +44,7 @@ class MainTotalFragment : Fragment() {
     lateinit var totalRecordList: MutableList<RecordEntity>
 
     /** 어뎁터 */
-    lateinit var adapter: MainTotalRecyclerViewAdapter
+    lateinit var mainTotalRecyclerViewAdapter: MainTotalRecyclerViewAdapter
 
     var position = -1
 
@@ -78,18 +78,24 @@ class MainTotalFragment : Fragment() {
         totalViewModel.isGetAllComplete.observe(this) {
             totalRecordList = it.toMutableList()
             setRecyclerView()
-            Log.d(TAG, "totalRecordList - $totalRecordList")
         }
         detailViewModel.isDeleteDataComplete.observe(requireActivity()) {
             if(::totalRecordList.isInitialized) {
                 val position = totalRecordList.indexOf(it)
 
                 if(position != -1) {
-//                    totalRecordList[position] = record
                     totalRecordList.removeAt(position)
+                    mainTotalRecyclerViewAdapter.notifyItemRemoved(position)
+                }
+            }
+        }
+        detailViewModel.isUpdateDataComplete.observe(requireActivity()) {
+            if(::totalRecordList.isInitialized) {
+                val position = totalRecordList.indexOf(it)
 
-                    adapter.notifyItemRemoved(position)
-//                adapter.notifyItemChanged(position)
+                if(position != -1) {
+                    totalRecordList[position] = mainViewModel.selectRecord
+                    mainTotalRecyclerViewAdapter.notifyItemChanged(position)
                 }
             }
         }
@@ -100,12 +106,15 @@ class MainTotalFragment : Fragment() {
     }
 
     private fun setRecyclerView() {
-        adapter = MainTotalRecyclerViewAdapter()
-        adapter.recordList = totalRecordList
-        binding.totalList.adapter = adapter
-        binding.totalList.layoutManager = LinearLayoutManager(requireContext())
+        mainTotalRecyclerViewAdapter = MainTotalRecyclerViewAdapter()
+        mainTotalRecyclerViewAdapter.recordList = totalRecordList
+        binding.totalList.apply {
+            adapter = mainTotalRecyclerViewAdapter
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+        }
 
-        adapter.removeClickListener(object: SetOnClickListenerInterface2 {
+        mainTotalRecyclerViewAdapter.removeClickListener(object: DetailItemSetOnClickListenerInterface {
 
             override fun updateClickListener(itemData: RecordEntity, binding: FragmentDetailBinding) {
 

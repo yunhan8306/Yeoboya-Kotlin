@@ -10,20 +10,10 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel(private val repository: RecordRepository): ViewModel() {
 
-    val isGetNoDataComplete = MutableLiveData<RecordEntity>()
-
     val isUpdateDataComplete = MutableLiveData<RecordEntity>()
 
     val isDeleteDataComplete = MutableLiveData<RecordEntity>()
 
-    /** no에 대한 data 조회 */
-    fun getNoData(no: Long) {
-        CoroutineScope(Dispatchers.IO).launch {
-            repository.getNoData(no).let {
-                isGetNoDataComplete.postValue(it)
-            }
-        }
-    }
 
     /** record 삭제 */
     fun deleteData(record: RecordEntity) {

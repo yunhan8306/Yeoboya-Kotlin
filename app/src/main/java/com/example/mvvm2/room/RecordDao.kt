@@ -30,19 +30,4 @@ interface RecordDAO {
     // data 수정
     @Update
     suspend fun updateData(recordEntity: RecordEntity)
-//
-
-//
-//    // 저장된 date 값 가져오기
-//    @Query("SELECT DISTINCT date FROM record_model")
-//    suspend fun getDate(): LiveData<List<String>>
-//
-//    // date에 대한 uriList 가져오기
-//    @Query("SELECT uriList FROM record_model WHERE 'date' = :date")
-//    suspend fun getDateUriList(date: String): LiveData<List<String>>
-//
-//    // 전체 삭제
-//    @Query("DELETE FROM record_model")
-//    suspend fun deleteAll()
-
 }

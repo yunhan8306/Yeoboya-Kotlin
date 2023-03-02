@@ -6,8 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.mvvm2.R
-import com.example.mvvm2.SetOnClickListenerInterface
-import com.example.mvvm2.SetOnClickListenerInterface2
+import com.example.mvvm2.DetailItemSetOnClickListenerInterface
 import com.example.mvvm2.databinding.FragmentDetailBinding
 import com.example.mvvm2.detail.ViewPagerAdapter
 import com.example.mvvm2.entity.RecordEntity
@@ -21,14 +20,14 @@ class MainTotalRecyclerViewAdapter(
     lateinit var adapter: ViewPagerAdapter
 
     // interface 객체 생성
-    private var onClickListener: SetOnClickListenerInterface2? = null
+    private var onClickListener: DetailItemSetOnClickListenerInterface? = null
 
     // Activity에서 호출 시 객체 초기화
-    fun removeClickListener(pOnClick: SetOnClickListenerInterface2) {
+    fun removeClickListener(pOnClick: DetailItemSetOnClickListenerInterface) {
         this.onClickListener = pOnClick
     }
 
-    fun updateClickListener(pOnClick: SetOnClickListenerInterface2) {
+    fun updateClickListener(pOnClick: DetailItemSetOnClickListenerInterface) {
         this.onClickListener = pOnClick
     }
 
@@ -55,9 +54,9 @@ class MainTotalRecyclerViewAdapter(
 
             /** 뷰페이저 출력 */
             adapter = ViewPagerAdapter()
-            var qq = record.uriList.split("^")
+            var uriList = record.uriList.split("^")
 
-            adapter.uriList = qq
+            adapter.uriList = uriList
             binding.viewPager.adapter = adapter
             binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 

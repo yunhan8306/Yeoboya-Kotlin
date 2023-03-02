@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 
 
-@Database(entities = [RecordEntity::class], version = 1, exportSchema = false)
+@Database(entities = [RecordEntity::class], version = 2, exportSchema = false)
 abstract class RecordDatabase : RoomDatabase() {
     abstract fun recordDAO(): RecordDAO
 
@@ -29,12 +29,10 @@ abstract class RecordDatabase : RoomDatabase() {
         }
 
         suspend fun populateDatabase(recordDAO: RecordDAO) {
-            // Delete all content here.
-//            recordDAO.deleteAll()
 
             // Add sample words.
             var record = RecordEntity(0,"test1","content1","2023-01-01","12:30","https://assets.vogue.com/photos/63c8a2077022d35c31c766ee/master/w_1920,c_limit/00001-lemaire-fall-2023-menswear-credit-lena-emery.jpg")
-            var record2 = RecordEntity(0,"test2","content2","2023-02-02","13:30","https://assets.vogue.com/photos/63c2e6383b8c841452deb19b/master/w_1920,c_limit/00001-our-legacy-fall-2023-ready-to-wear-credit-isak-berglund-mattsson-marn.jpg")
+            var record2 = RecordEntity(1,"test2","content2","2023-02-02","13:30","https://assets.vogue.com/photos/63c2e6383b8c841452deb19b/master/w_1920,c_limit/00001-our-legacy-fall-2023-ready-to-wear-credit-isak-berglund-mattsson-marn.jpg")
             recordDAO.saveData(record)
             recordDAO.saveData(record2)
         }

@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.RequestManager
@@ -32,8 +33,7 @@ import java.time.format.DateTimeFormatter
 class MainRecordFragment : Fragment() {
 
     /** viewModel */
-    lateinit var recordViewModel: RecordViewModel
-    lateinit var mainViewModel: MainViewModel
+    private val recordViewModel: RecordViewModel by viewModels { viewModelFactory }
 
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
@@ -74,21 +74,18 @@ class MainRecordFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
         /** 이미지 갱신 */
         resetViewPagerAdapter()
     }
 
     private fun initRecordFragment() {
-        initViewModel()
+        initViewModelFactory()
         setObserver()
     }
 
     /** viewModel init */
-    private fun initViewModel() {
+    private fun initViewModelFactory() {
         viewModelFactory = ViewModelFactory(RecordRepository())
-        recordViewModel = ViewModelProvider(this, viewModelFactory)[RecordViewModel::class.java]
-        mainViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[MainViewModel::class.java]
     }
 
     /** observer set */
@@ -106,7 +103,6 @@ class MainRecordFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun saveRecord() {
         if(binding.recordInput.toString().trim().isEmpty().not()) {
-
             /** date, time */
             val current = LocalDateTime.now()
 
@@ -116,12 +112,12 @@ class MainRecordFragment : Fragment() {
             val time = current.format(DateTimeFormatter.ISO_TIME).substring(0 until 8)
 
             /** uriList 확인 */
-            val uriListStr = uriList.takeIf { it.isNullOrEmpty() }?.let { it.joinToString(separator = "^") } ?: ""
+            val uriListStr = uriList.takeIf { it.isNotEmpty() }?.joinToString(separator = "^") ?: ""
 
             /** title or content 입력 시 저장 */
             if(title != "" || content != ""){
                 /** 저장할 RecordEntity */
-                var recordEntity = RecordEntity(0,title,content,date,time,uriListStr)
+                val recordEntity = RecordEntity(0,title,content,date,time,uriListStr)
                 recordViewModel.saveRecord(recordEntity)
                 Log.d(TAG, "recordEntity - $recordEntity")
             }

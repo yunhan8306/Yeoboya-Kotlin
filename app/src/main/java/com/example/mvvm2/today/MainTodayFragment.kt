@@ -8,10 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm2.R
-import com.example.mvvm2.SetOnClickListenerInterface
+import com.example.mvvm2.ItemSetOnClickListenerInterface
 import com.example.mvvm2.databinding.FragmentMainTodayBinding
 import com.example.mvvm2.databinding.TodayListItemBinding
 import com.example.mvvm2.detail.DetailFragment
@@ -23,15 +24,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MainTodayFragment : Fragment() {
 
     /** 바인딩*/
     private lateinit var binding: FragmentMainTodayBinding
 
     /** viewModel */
-    lateinit var todayViewModel: TodayViewModel
-    lateinit var mainViewModel: MainViewModel
-    lateinit var detailViewModel: DetailViewModel
+    private val todayViewModel: TodayViewModel by viewModels(factoryProducer = { viewModelFactory })
+    private val mainViewModel: MainViewModel by viewModels({ requireActivity() }, factoryProducer = { viewModelFactory })
+    private val detailViewModel: DetailViewModel by viewModels({ requireActivity() }, factoryProducer = { viewModelFactory })
 
     /** viewModelFactory */
     lateinit var viewModelFactory: ViewModelFactory
@@ -45,9 +47,16 @@ class MainTodayFragment : Fragment() {
     /** 어뎁터 */
     lateinit var adapter: MainTodayRecyclerViewAdapter
 
+    /** date, time */
+    private val current by lazy {
+        LocalDateTime.now()
+    }
+    private val today by lazy {
+        current.format(DateTimeFormatter.ISO_DATE)
+    }
+
     var position = -1
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initTodayFragment()
@@ -62,20 +71,15 @@ class MainTodayFragment : Fragment() {
     }
 
     /** init */
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun initTodayFragment() {
-        initViewModel()
+    private fun initTodayFragment() {
+        initViewModelFactory()
         setObserver()
         getTodayRecordList()
     }
 
-    private fun initViewModel() {
+    private fun initViewModelFactory() {
         viewModelFactory = ViewModelFactory(RecordRepository())
-        todayViewModel = ViewModelProvider(this, viewModelFactory)[TodayViewModel::class.java]
-        mainViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[MainViewModel::class.java]
-        detailViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[DetailViewModel::class.java]
     }
-
 
     private fun setObserver() {
         /** 조회 옵저버 */
@@ -86,17 +90,27 @@ class MainTodayFragment : Fragment() {
         }
         /** 수정 옵저버 */
         detailViewModel.isUpdateDataComplete.observe(requireActivity()) {
-            todayRecordList[position] = mainViewModel.selectRecord
-            adapter.notifyItemChanged(position)
+            if(::todayRecordList.isInitialized) {
+//                if(mainViewModel.selectRecord.date == today) {
+                    todayRecordList[position] = mainViewModel.selectRecord
+                    adapter.notifyItemChanged(position)
+//                }
+            }
+        }
+        /** 삭제 옵저버 */
+        detailViewModel.isDeleteDataComplete.observe(requireActivity()) {
+            if(::todayRecordList.isInitialized) {
+                val position = todayRecordList.indexOf(it)
+                if(position != -1) {
+                    todayRecordList.removeAt(position)
+
+                    adapter.notifyItemRemoved(position)
+                }
+            }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getTodayRecordList(){
-        /** date, time */
-        val current = LocalDateTime.now()
-        val today = current.format(DateTimeFormatter.ISO_DATE)
-
+    private fun getTodayRecordList(){
         todayViewModel.getDateData(today)
     }
 
@@ -108,7 +122,7 @@ class MainTodayFragment : Fragment() {
         binding.todayList.layoutManager = LinearLayoutManager(requireContext())
 
         /** 리스트 클릭*/
-        adapter.listItemClickFunc(object: SetOnClickListenerInterface {
+        adapter.listItemClickFunc(object: ItemSetOnClickListenerInterface {
             override fun listItemClickListener(itemData: RecordEntity, binding: TodayListItemBinding) {
                 position = todayRecordList.indexOf(itemData)
                 mainViewModel.selectRecord = itemData

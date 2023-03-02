@@ -30,7 +30,7 @@ class ViewPagerHolder(private val binding: ActivityImageViewBinding) : RecyclerV
     fun bind(imgUri: String) {
         Glide.with(itemView)
             .load(imgUri)
-            .error(R.drawable.blank_space)
+//            .error(R.drawable.blank_space)
             .into(binding.recordImage)
 
         /** 이미지 상세 뷰 오류 해결 필요 */
